@@ -100,11 +100,11 @@ const Navbar = () => {
                 )}
               </div>
             ) : (
-              <div className="flex items-center gap-4">
-                <Link to="/login" className="text-slate-600 hover:text-primary-600 font-semibold transition-colors text-sm">
+              <div className="flex items-center gap-3">
+                <Link to="/login" className="btn-secondary py-2 px-5 text-sm font-semibold">
                   Login
                 </Link>
-                <Link to="/register" className="btn-primary py-2.5 px-5 text-sm">
+                <Link to="/register" className="btn-primary py-2 px-5 text-sm font-semibold">
                   Register
                 </Link>
               </div>
