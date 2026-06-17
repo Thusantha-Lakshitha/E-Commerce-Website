@@ -100,9 +100,14 @@ const Navbar = () => {
                 )}
               </div>
             ) : (
-              <Link to="/login" className="btn-primary py-2 px-5 text-sm">
-                Login
-              </Link>
+              <div className="flex items-center gap-4">
+                <Link to="/login" className="text-slate-600 hover:text-primary-600 font-semibold transition-colors text-sm">
+                  Login
+                </Link>
+                <Link to="/register" className="btn-primary py-2.5 px-5 text-sm">
+                  Register
+                </Link>
+              </div>
             )}
           </div>
 
@@ -182,13 +187,22 @@ const Navbar = () => {
               </button>
             </>
           ) : (
-            <Link
-              to="/login"
-              onClick={() => setIsOpen(false)}
-              className="block text-center btn-primary py-2 w-full"
-            >
-              Login
-            </Link>
+            <div className="flex flex-col gap-2 pt-2">
+              <Link
+                to="/login"
+                onClick={() => setIsOpen(false)}
+                className="block text-center btn-secondary py-2.5 w-full text-sm"
+              >
+                Login
+              </Link>
+              <Link
+                to="/register"
+                onClick={() => setIsOpen(false)}
+                className="block text-center btn-primary py-2.5 w-full text-sm"
+              >
+                Register
+              </Link>
+            </div>
           )}
         </div>
       )}
