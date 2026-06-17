@@ -286,6 +286,15 @@ export const getAdminStats = async (req, res, next) => {
       }
     }
 
+    // 6. Category product counts distribution
+    const categoriesGroup = await Product.aggregate([
+      { $group: { _id: '$category', count: { $sum: 1 } } },
+    ]);
+    const categoryDistribution = categoriesGroup.map((c) => ({
+      category: c._id || 'General',
+      count: c.count,
+    }));
+
     res.json({
       totalSales: parseFloat(totalSales.toFixed(2)),
       totalUsers,
@@ -295,6 +304,7 @@ export const getAdminStats = async (req, res, next) => {
       lowStockAlerts,
       monthlyRevenue,
       bestSellers,
+      categoryDistribution,
     });
   } catch (error) {
     next(error);

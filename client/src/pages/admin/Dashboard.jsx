@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../utils/api';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler } from 'chart.js';
-import { Line } from 'react-chartjs-2';
-import { DollarSign, ShoppingCart, Users, Package, AlertTriangle, ChevronRight, Loader2, Award } from 'lucide-react';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler, ArcElement } from 'chart.js';
+import { Line, Doughnut } from 'react-chartjs-2';
+import { DollarSign, ShoppingCart, Users, Package, AlertTriangle, ChevronRight, Loader2, Award, PieChart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 // Register ChartJS modules
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler, ArcElement);
 
 const Dashboard = () => {
   const [stats, setStats] = useState(null);
@@ -104,6 +104,42 @@ const Dashboard = () => {
     },
   };
 
+  // Set up Doughnut Category chart data
+  const doughnutData = {
+    labels: stats.categoryDistribution?.map((c) => c.category) || [],
+    datasets: [
+      {
+        data: stats.categoryDistribution?.map((c) => c.count) || [],
+        backgroundColor: [
+          '#8b5cf6', // primary-500
+          '#6366f1', // indigo-500
+          '#0ea5e9', // sky-500
+          '#10b981', // emerald-500
+          '#f59e0b', // amber-500
+          '#ef4444', // red-500
+        ],
+        borderWidth: 2,
+        borderColor: '#ffffff',
+      },
+    ],
+  };
+
+  const doughnutOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          boxWidth: 10,
+          font: { weight: 'semibold', size: 11 },
+          color: '#64748b',
+          padding: 15,
+        },
+      },
+    },
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Top Header */}
@@ -146,7 +182,7 @@ const Dashboard = () => {
         ))}
       </div>
 
-      {/* Row: Revenue Chart & Low Stock alerts */}
+      {/* Row: Revenue Chart & Category Distribution */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Revenue Line Chart */}
         <div className="lg:col-span-2 bg-white p-6 sm:p-8 rounded-3xl border border-slate-100 shadow-sm space-y-4">
@@ -156,8 +192,66 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Stock alerts */}
-        <div className="lg:col-span-1 bg-white p-6 sm:p-8 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between space-y-4 h-full max-h-[440px]">
+        {/* Category Distribution Doughnut */}
+        <div className="lg:col-span-1 bg-white p-6 sm:p-8 rounded-3xl border border-slate-100 shadow-sm space-y-4 flex flex-col justify-between">
+          <h3 className="font-extrabold text-slate-800 text-lg flex items-center gap-1.5">
+            <PieChart className="w-5 h-5 text-indigo-500" />
+            Category Distribution
+          </h3>
+          <div className="h-64 w-full relative flex items-center justify-center">
+            {stats.categoryDistribution && stats.categoryDistribution.length > 0 ? (
+              <Doughnut data={doughnutData} options={doughnutOptions} />
+            ) : (
+              <span className="text-slate-400 text-sm">No items inside categories</span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Row: Best Sellers & Stock Warnings */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Best Sellers */}
+        <div className="lg:col-span-2 bg-white p-6 sm:p-8 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+          <h3 className="font-extrabold text-slate-800 text-lg flex items-center gap-1.5">
+            <Award className="w-5 h-5 text-indigo-500" />
+            Best Selling Products
+          </h3>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse text-sm">
+              <thead>
+                <tr className="border-b border-slate-100 text-slate-400 font-bold">
+                  <th className="py-3 px-4">Product Name</th>
+                  <th className="py-3 px-4">Price</th>
+                  <th className="py-3 px-4">Category</th>
+                  <th className="py-3 px-4 text-right">Units Sold</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 text-slate-700">
+                {stats.bestSellers && stats.bestSellers.length > 0 ? (
+                  stats.bestSellers.map((prod) => (
+                    <tr key={prod._id} className="hover:bg-slate-50 transition-colors">
+                      <td className="py-4 px-4 font-semibold text-slate-800">{prod.name}</td>
+                      <td className="py-4 px-4">${prod.price.toFixed(2)}</td>
+                      <td className="py-4 px-4 text-xs font-semibold uppercase tracking-wider text-primary-600">
+                        {prod.category}
+                      </td>
+                      <td className="py-4 px-4 font-bold text-slate-800 text-right">{prod.unitsSold} units</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="4" className="text-center text-slate-400 py-6">
+                      Place some paid orders to compute best sellers analytics.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Low Stock Alerts */}
+        <div className="lg:col-span-1 bg-white p-6 sm:p-8 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between space-y-4">
           <div className="flex justify-between items-center border-b border-slate-100 pb-3">
             <h3 className="font-extrabold text-slate-800 text-lg flex items-center gap-1.5">
               <AlertTriangle className="w-5 h-5 text-amber-500" />
@@ -168,7 +262,7 @@ const Dashboard = () => {
             </span>
           </div>
 
-          <div className="overflow-y-auto space-y-3.5 pr-1 flex-grow">
+          <div className="overflow-y-auto space-y-3.5 pr-1 flex-grow max-h-60">
             {stats.lowStockAlerts && stats.lowStockAlerts.length > 0 ? (
               stats.lowStockAlerts.map((prod) => (
                 <div key={prod._id} className="flex justify-between items-center text-xs p-3 bg-slate-50 border border-slate-100 rounded-xl">
@@ -184,46 +278,6 @@ const Dashboard = () => {
               </div>
             )}
           </div>
-        </div>
-      </div>
-
-      {/* Row: Best Sellers products */}
-      <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-100 shadow-sm space-y-4">
-        <h3 className="font-extrabold text-slate-800 text-lg flex items-center gap-1.5">
-          <Award className="w-5 h-5 text-indigo-500" />
-          Best Selling Products
-        </h3>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse text-sm">
-            <thead>
-              <tr className="border-b border-slate-100 text-slate-400 font-bold">
-                <th className="py-3 px-4">Product Name</th>
-                <th className="py-3 px-4">Price</th>
-                <th className="py-3 px-4">Category</th>
-                <th className="py-3 px-4 text-right">Units Sold</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 text-slate-700">
-              {stats.bestSellers && stats.bestSellers.length > 0 ? (
-                stats.bestSellers.map((prod) => (
-                  <tr key={prod._id} className="hover:bg-slate-50 transition-colors">
-                    <td className="py-4 px-4 font-semibold text-slate-800">{prod.name}</td>
-                    <td className="py-4 px-4">${prod.price.toFixed(2)}</td>
-                    <td className="py-4 px-4 text-xs font-semibold uppercase tracking-wider text-primary-600">
-                      {prod.category}
-                    </td>
-                    <td className="py-4 px-4 font-bold text-slate-800 text-right">{prod.unitsSold} units</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="4" className="text-center text-slate-400 py-6">
-                    Place some paid orders to compute best sellers analytics.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
         </div>
       </div>
     </div>
