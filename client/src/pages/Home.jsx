@@ -1,15 +1,26 @@
-import React, { useContext, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext, useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import ProductContext from '../context/ProductContext';
 import ProductCard from '../components/ProductCard';
-import { ArrowRight, ShoppingBag, Truck, ShieldCheck, Sparkles, RefreshCw } from 'lucide-react';
+import { ArrowRight, ShoppingBag, Truck, ShieldCheck, Sparkles, RefreshCw, Search } from 'lucide-react';
 
 const Home = () => {
   const { products, fetchProducts, loading } = useContext(ProductContext);
+  const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchProducts({ pageSize: 4 });
   }, []);
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/products?keyword=${encodeURIComponent(searchQuery.trim())}`);
+    } else {
+      navigate('/products');
+    }
+  };
 
   const categories = [
     { name: 'Electronics', count: '120+ Products', image: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400&auto=format&fit=crop&q=60' },
@@ -36,7 +47,25 @@ const Home = () => {
             <p className="text-slate-300 text-lg max-w-lg mx-auto lg:mx-0">
               Discover unique quality products at competitive prices. Fast delivery, secure payments, and outstanding support.
             </p>
-            <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
+
+            {/* Premium Search Bar */}
+            <form onSubmit={handleSearchSubmit} className="relative max-w-md mx-auto lg:mx-0 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-1.5 flex gap-2 shadow-lg focus-within:ring-2 focus-within:ring-primary-500 focus-within:border-transparent transition-all">
+              <div className="relative flex-grow flex items-center">
+                <Search className="w-5 h-5 text-slate-300 absolute left-3.5" />
+                <input
+                  type="text"
+                  placeholder="Search premium products..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="bg-transparent text-white placeholder-slate-400 border-none outline-none focus:outline-none w-full pl-11 pr-4 py-2 text-sm"
+                />
+              </div>
+              <button type="submit" className="bg-primary-600 hover:bg-primary-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition-all">
+                Search
+              </button>
+            </form>
+
+            <div className="flex flex-wrap gap-4 justify-center lg:justify-start pt-2">
               <Link to="/products" className="btn-primary py-3.5 px-8 flex items-center gap-2">
                 Browse Products
                 <ArrowRight className="w-5 h-5" />
