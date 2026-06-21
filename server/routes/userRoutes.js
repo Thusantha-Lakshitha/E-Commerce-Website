@@ -5,6 +5,11 @@ import {
   getWishlist,
   addToWishlist,
   removeFromWishlist,
+  getCart,
+  addToCart,
+  updateCartQty,
+  removeFromCart,
+  clearCart,
 } from '../controllers/userController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
@@ -21,5 +26,16 @@ router
   .post(protect, addToWishlist);
 
 router.delete('/wishlist/:id', protect, removeFromWishlist);
+
+router
+  .route('/cart')
+  .get(protect, getCart)
+  .post(protect, addToCart)
+  .delete(protect, clearCart);
+
+router
+  .route('/cart/:id')
+  .put(protect, updateCartQty)
+  .delete(protect, removeFromCart);
 
 export default router;

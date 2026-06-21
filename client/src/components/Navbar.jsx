@@ -26,7 +26,7 @@ const Navbar = () => {
           <div className="flex items-center">
             <Link to="/" className="flex items-center gap-2 font-extrabold text-2xl text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-indigo-600">
               <ShoppingBag className="w-7 h-7 text-primary-600" />
-              MERN<span className="text-slate-800">Shop</span>
+              Lux<span className="text-slate-800">Zone</span>
             </Link>
             <div className="hidden md:flex ml-10 space-x-8">
               <Link to="/" className="text-slate-600 hover:text-primary-600 font-medium transition-colors">

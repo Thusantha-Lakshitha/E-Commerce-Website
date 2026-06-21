@@ -10,7 +10,7 @@ const Footer = () => {
           {/* Logo & Description */}
           <div className="space-y-4">
             <Link to="/" className="text-white font-extrabold text-2xl tracking-tight">
-              MERN<span className="text-primary-500">Shop</span>
+              Lux<span className="text-primary-500">Zone</span>
             </Link>
             <p className="text-sm">
               Discover a premium shopping experience. Browse our curated catalogs, save items, and checkout securely in seconds.
@@ -57,7 +57,7 @@ const Footer = () => {
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-primary-500" />
-                <span>support@mernshop.com</span>
+                <span>support@luxzoneshop.com</span>
               </li>
               <li className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-primary-500" />
@@ -86,7 +86,7 @@ const Footer = () => {
         <hr className="border-slate-800 my-8" />
 
         <div className="flex flex-col sm:flex-row justify-between items-center text-sm text-slate-500">
-          <p>© {new Date().getFullYear()} MERNShop. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} LuxZone. All rights reserved.</p>
           <div className="flex gap-4 mt-4 sm:mt-0">
             <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-white transition-colors">Terms of Service</a>

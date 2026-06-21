@@ -36,16 +36,16 @@ export const registerUser = async (req, res, next) => {
 
     if (user) {
       // Send Welcome Email
-      const emailSubject = 'Welcome to MERN Shop!';
-      const emailText = `Hello ${user.name},\n\nWelcome to MERN Shop! We are excited to have you as part of our community.\n\nBest regards,\nMERN Shop Team`;
+      const emailSubject = 'Welcome to LuxZone!';
+      const emailText = `Hello ${user.name},\n\nWelcome to LuxZone! We are excited to have you as part of our community.\n\nBest regards,\nLuxZone Shop Team`;
       const emailHtml = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
-          <h2 style="color: #4F46E5;">Welcome to MERN Shop, ${user.name}!</h2>
+          <h2 style="color: #4F46E5;">Welcome to LuxZone, ${user.name}!</h2>
           <p>We're thrilled to welcome you to our community. You can now browse our catalogue, save items to your wishlist, and make secure purchases.</p>
           <p>Start shopping now:</p>
           <a href="${process.env.CLIENT_URL || 'http://localhost:5173'}" style="display: inline-block; background-color: #4F46E5; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 10px;">Visit Our Store</a>
           <br/><br/>
-          <p>Best regards,<br/><strong>MERN Shop Team</strong></p>
+          <p>Best regards,<br/><strong>LuxZone Shop Team</strong></p>
         </div>
       `;
       await sendEmail({ email: user.email, subject: emailSubject, text: emailText, html: emailHtml });
@@ -132,7 +132,7 @@ export const forgotPassword = async (req, res, next) => {
         <p style="color: #4F46E5; font-size: 12px; word-break: break-all;">${resetUrl}</p>
         <p>If you did not make this request, please ignore this email safely.</p>
         <br/>
-        <p>Best regards,<br/><strong>MERN Shop Team</strong></p>
+        <p>Best regards,<br/><strong>LuxZone Shop Team</strong></p>
       </div>
     `;
 

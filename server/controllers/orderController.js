@@ -55,7 +55,7 @@ export const addOrderItems = async (req, res, next) => {
 
     // Send Order Confirmation Email
     const emailSubject = `Order Confirmation #${createdOrder._id}`;
-    const emailText = `Hello ${req.user.name},\n\nThank you for shopping with us! We have received your order.\n\nOrder Total: $${totalPrice}\nWe will notify you once your order is shipped.\n\nBest regards,\nMERN Shop Team`;
+    const emailText = `Hello ${req.user.name},\n\nThank you for shopping with us! We have received your order.\n\nOrder Total: $${totalPrice}\nWe will notify you once your order is shipped.\n\nBest regards,\nLuxZone Shop Team`;
     const emailHtml = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
         <h2 style="color: #4F46E5;">Thank You for Your Order!</h2>
@@ -68,7 +68,7 @@ export const addOrderItems = async (req, res, next) => {
         </div>
         <p>You can view your order status in your profile dashboard at any time.</p>
         <br/>
-        <p>Best regards,<br/><strong>MERN Shop Team</strong></p>
+        <p>Best regards,<br/><strong>LuxZone Shop Team</strong></p>
       </div>
     `;
     await sendEmail({ email: req.user.email, subject: emailSubject, text: emailText, html: emailHtml });

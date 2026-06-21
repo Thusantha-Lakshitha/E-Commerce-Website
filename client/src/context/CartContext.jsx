@@ -1,20 +1,54 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import api from '../utils/api';
+import AuthContext from './AuthContext';
 
 export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-  const [cartItems, setCartItems] = useState(
-    localStorage.getItem('cartItems')
-      ? JSON.parse(localStorage.getItem('cartItems'))
-      : []
-  );
+  const { userInfo } = useContext(AuthContext);
+  const [cartItems, setCartItems] = useState([]);
 
-  // Sync to localStorage
+  // Load cart items initially based on user status
   useEffect(() => {
-    localStorage.setItem('cartItems', JSON.stringify(cartItems));
-  }, [cartItems]);
+    const loadCart = async () => {
+      // Clean up legacy global cart key if it exists
+      if (localStorage.getItem('cartItems')) {
+        localStorage.removeItem('cartItems');
+      }
 
-  const addToCart = (product, qty = 1) => {
+      if (userInfo) {
+        const userCartKey = `cartItems_${userInfo._id}`;
+        const localUserCart = localStorage.getItem(userCartKey);
+        if (localUserCart) {
+          setCartItems(JSON.parse(localUserCart));
+        } else {
+          setCartItems([]);
+        }
+
+        try {
+          const { data } = await api.get('/users/cart');
+          setCartItems(data);
+          localStorage.setItem(userCartKey, JSON.stringify(data));
+        } catch (err) {
+          console.error('Error fetching cart from backend:', err.message);
+        }
+      } else {
+        const guestCart = localStorage.getItem('cartItems_guest');
+        setCartItems(guestCart ? JSON.parse(guestCart) : []);
+      }
+    };
+
+    loadCart();
+  }, [userInfo]);
+
+  // Sync state to localStorage whenever it changes
+  useEffect(() => {
+    const key = userInfo ? `cartItems_${userInfo._id}` : 'cartItems_guest';
+    localStorage.setItem(key, JSON.stringify(cartItems));
+  }, [cartItems, userInfo]);
+
+  const addToCart = async (product, qty = 1) => {
+    // 1. Update local state
     setCartItems((prevItems) => {
       const existItem = prevItems.find((x) => x.product === product._id);
 
@@ -38,20 +72,62 @@ export const CartProvider = ({ children }) => {
         ];
       }
     });
+
+    // 2. Sync to backend if logged in
+    if (userInfo) {
+      try {
+        const { data } = await api.post('/users/cart', { productId: product._id, qty });
+        setCartItems(data);
+      } catch (err) {
+        console.error('Error syncing add-to-cart to backend:', err.message);
+      }
+    }
   };
 
-  const updateCartQty = (productId, qty) => {
+  const updateCartQty = async (productId, qty) => {
+    // 1. Update local state
     setCartItems((prevItems) =>
       prevItems.map((x) => (x.product === productId ? { ...x, qty } : x))
     );
+
+    // 2. Sync to backend if logged in
+    if (userInfo) {
+      try {
+        const { data } = await api.put(`/users/cart/${productId}`, { qty });
+        setCartItems(data);
+      } catch (err) {
+        console.error('Error syncing update-qty to backend:', err.message);
+      }
+    }
   };
 
-  const removeFromCart = (productId) => {
+  const removeFromCart = async (productId) => {
+    // 1. Update local state
     setCartItems((prevItems) => prevItems.filter((x) => x.product !== productId));
+
+    // 2. Sync to backend if logged in
+    if (userInfo) {
+      try {
+        const { data } = await api.delete(`/users/cart/${productId}`);
+        setCartItems(data);
+      } catch (err) {
+        console.error('Error syncing remove-item to backend:', err.message);
+      }
+    }
   };
 
-  const clearCart = () => {
+  const clearCart = async () => {
+    // 1. Update local state
     setCartItems([]);
+
+    // 2. Sync to backend if logged in
+    if (userInfo) {
+      try {
+        await api.delete('/users/cart');
+      } catch (err) {
+        console.error('Error syncing clear-cart to backend:', err.message);
+      }
+    }
   };
 
   // Helper calculations

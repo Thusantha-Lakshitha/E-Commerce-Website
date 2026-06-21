@@ -1,5 +1,5 @@
+import './loadEnv.js';
 import express from 'express';
-import dotenv from 'dotenv';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
@@ -15,8 +15,6 @@ import orderRoutes from './routes/orderRoutes.js';
 // Error Middleware imports
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 
-// Load env variables
-dotenv.config();
 
 const app = express();
 
@@ -48,7 +46,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Health Check / Root route
 app.get('/', (req, res) => {
-  res.json({ message: 'E-Commerce MERN API is running...' });
+  res.json({ message: 'E-Commerce LuxZone API is running...' });
 });
 
 // Routes
